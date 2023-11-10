@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Buku;  
+use Intervention\Image\Facades\Image;
 
 class ControllerBuku extends Controller
 {
@@ -71,11 +72,25 @@ class ControllerBuku extends Controller
 
     public function update(Request $request, $id) {
         $buku = Buku::find($id);
+
+        $request->validate([
+            'thumbnail' => 'image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        $fileName = time().'_'.$request->thumbnail->getClientOriginalName();
+        $filePath = $request->file('thumbnail')->storeAs('uploads', $fileName, 'public');
+
+        Image::make(storage_path().'/app/public/uploads/'.$fileName)
+            ->fit(240,320)
+            ->save();
+
         $buku->update([
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'harga' => $request->harga,
-            'tgl_terbit' => $request->tgl_terbit
+            'tgl_terbit' => $request->tgl_terbit,
+            'filename' => $fileName,
+            'filepath' => '/storage/' . $filePath
         ]);
         return redirect('/buku');
     }
