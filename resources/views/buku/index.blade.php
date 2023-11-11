@@ -1,71 +1,92 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Buku
+<x-slot name="header">
+    <div class="flex justify-between items-center">
+        <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Daftar Buku') }}
         </h2>
-    </x-slot>
+        @if(Auth::check() && Auth::user()->role === 'admin')
+            <a href="{{ route('buku.create') }}" class="inline-block px-4 py-2 border border-blue-500 text-blue-500 bg-blue-100 rounded">
+                {{ __('Tambah Buku Baru') }}
+            </a>
+        @endif
+    </div>
+</x-slot>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-gray-900 dark:text-gray-100">
+                <div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
+                    <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 font-medium text-gray-900">Buku</th>
+                                <th scope="col" class="px-6 py-4 font-medium text-gray-900">Harga</th>
+                                <th scope="col" class="px-6 py-4 font-medium text-gray-900">Tgl. Terbit</th>
+                                <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 border-t border-gray-100">
+                            @foreach( $data_buku as $buku )
+                                <tr class="hover:bg-gray-50">
+                                    <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+                                        @if ( $buku->filepath )
+                                            <div class="relative h-24 w-24">
+                                                <img
+                                                    class="h-full w-full object-cover object-center"
+                                                    src="{{ asset($buku->filepath) }}"
+                                                    alt=""
+                                                    style="padding-right: 20px;"
+                                                />
+                                            </div>
+                                        @endif
+                                        <div class="text-sm">
+                                            <div class="font-medium text-gray-700">{{ $buku->judul }}</div>
+                                            <div class="text-gray-400">{{ $buku->penulis }}</div>
+                                        </div>
+                                    </th>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+                                        >
+                                            <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                                            Rp. {{ number_format($buku->harga, 0, ',', '.') }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($buku->tgl_terbit)->format('j F Y') }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-end gap-4">
+                                            <form action="{{ route('buku.destroy', $buku->id) }}" method="post" id="delete-buku">
+                                                @csrf
+                                                <button onclick="return confirm('yakin mau dihapus?')" class="btn-delete">Hapus</button>
+                                            </form>
+                                            <a x-data="{ tooltip: 'Edite' }" href="{{ route('buku.edit', $buku->id) }}">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="h-6 w-6"
+                                                    x-tooltip="tooltip"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
+    {{ $data_buku->links('vendor.pagination.tailwind') }}
+</div>
 
-    <body class="bg-gray-100">
-        <div class="container mx-auto mt-10 p-4">
-            <div class="flex justify-between items-center mb-4">
-                <a href="{{ route('buku.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-block">Tambah Buku</a>
-
-                <form action="{{ route('buku.search') }}" method="GET" class="flex">
-                    <input type="text" name="search" placeholder="Cari Buku" class="rounded-l py-2 px-4 border-t border-b border-l text-gray-800 border-gray-200 bg-white" />
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white font-bold rounded-r">Cari</button>
-                </form>
-            </div>
-
-            <table class="w-full border-collapse border border-gray-300 bg-white shadow-md">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-300">No.</th>
-                        <th class="px-4 py-2 border border-gray-300">Judul Buku</th>
-                        <th class="px-4 py-2 border border-gray-300">Penulis</th>
-                        <th class="px-4 py-2 border border-gray-300">Harga</th>
-                        <th class="px-4 py-2 border border-gray-300">Tgl. Terbit</th>
-                        <th class="px-4 py-2 border border-gray-300">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $no = 0; @endphp
-                    @foreach ($data_buku as $buku)
-                    <tr>
-                        <td class="px-4 py-2 border border-gray-300">{{ ++$no }}</td>
-                        <td class="px-4 py-2 border border-gray-300">
-                            @if ($buku->filepath)
-                            <div class="relative h-10 w-10">
-                                <img class="h-full w-full rounded-full object-cover object-center" src="{{ asset($buku->filepath) }}" alt="" style="padding-right: 20px;" />
-                            </div>
-                            @endif
-                            {{ $buku->judul }}
-                        </td>
-                        <td class="px-4 py-2 border border-gray-300">{{ $buku->penulis }}</td>
-                        <td class="px-4 py-2 border border-gray-300">Rp {{ number_format($buku->harga, 2) }}</td>
-                        <td class="px-4 py-2 border border-gray-300">{{ $buku->tgl_terbit }}</td>
-                        <td class="px-4 py-2 border border-gray-300">
-                            <a href="{{ route('buku.edit', $buku->id) }}" class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button onclick="return confirm('Yakin mau dihapus?')" class="text-red-500 hover:text-red-700">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            @include('buku.pagination', ['paginator' => $data_buku])
-
-            <div class="w-full flex flex-col items-center my-3">
-                <div class="flex flex-col">{{$data_buku->links()}}</div>
-            </div>
-
-            <div class="mt-6 p-4 bg-white shadow-md">
-                <p class="text-lg">Jumlah buku yang tersedia: {{ $jumlah_buku }}</p>
-                <p class="text-lg">Total harga dari seluruh buku: Rp {{ number_format($total_harga, 2) }}</p>
+                </div>
             </div>
         </div>
-    </body>
+    </div>
 </x-app-layout>
