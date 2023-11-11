@@ -52,15 +52,21 @@
                         </script>
                     </div>
 
-                    <div class="gallery_items mt-6">
+                    <div class="gallery_items mt-6 flex space-x-4">
                         @foreach($buku->galleries()->get() as $gallery)
-                            <div class="gallery_item mb-4">
+                            <div class="gallery_item border-2 border-gray-200 shadow-lg p-2 rounded flex flex-col items-center">
                                 <img
-                                    class="rounded-full object-cover object-center"
+                                    class="rounded-full object-cover object-center mb-2"
                                     src="{{ asset($gallery->path) }}"
                                     alt=""
-                                    width="400"
+                                    width="100"
+                                    height="100"
                                 />
+                                <form action="{{ route('buku.deleteGallery', [$buku->id, $gallery->id]) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Yakin mau dihapus?')" class="text-red-500">Hapus</button>
+                                </form>
                             </div>
                         @endforeach
                     </div>

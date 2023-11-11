@@ -145,4 +145,14 @@ class ControllerBuku extends Controller
     
         return redirect('/buku')->with('pesan', 'Perubahan Data Buku Berhasil di Simpan');
     }
+
+    public function deleteGallery($bukuId, $galleryId)
+    {
+        $buku = Buku::findOrFail($bukuId);
+        $gallery = $buku->galleries()->findOrFail($galleryId);
+        $gallery->delete();
+    
+        return redirect()->back()->with('success', 'Gambar berhasil dihapus');
+    }
+
 }

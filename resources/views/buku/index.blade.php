@@ -1,16 +1,17 @@
 <x-app-layout>
-<x-slot name="header">
-    <div class="flex justify-between items-center">
-        <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Daftar Buku') }}
-        </h2>
-        @if(Auth::check() && Auth::user()->role === 'admin')
-            <a href="{{ route('buku.create') }}" class="inline-block px-4 py-2 border border-blue-500 text-blue-500 bg-blue-100 rounded">
-                {{ __('Tambah Buku Baru') }}
-            </a>
-        @endif
-    </div>
-</x-slot>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Daftar Buku') }}
+            </h2>
+            @if(Auth::check() && Auth::user()->role === 'admin')
+                <a href="{{ route('buku.create') }}" class="inline-block px-4 py-2 border border-blue-500 text-blue-500 bg-blue-100 rounded">
+                    {{ __('Tambah Buku Baru') }}
+                </a>
+            @endif
+        </div>
+    </x-slot>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto">
             <div class="text-gray-900 dark:text-gray-100">
@@ -25,10 +26,10 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 border-t border-gray-100">
-                            @foreach( $data_buku as $buku )
+                            @foreach($data_buku as $buku)
                                 <tr class="hover:bg-gray-50">
                                     <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
-                                        @if ( $buku->filepath )
+                                        @if($buku->filepath)
                                             <div class="relative h-24 w-24">
                                                 <img
                                                     class="h-full w-full object-cover object-center"
@@ -44,9 +45,7 @@
                                         </div>
                                     </th>
                                     <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
-                                        >
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600">
                                             <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
                                             Rp. {{ number_format($buku->harga, 0, ',', '.') }}
                                         </span>
@@ -55,11 +54,11 @@
                                     <td class="px-6 py-4">
                                         <div class="flex justify-end gap-4">
                                             <form action="{{ route('buku.destroy', $buku->id) }}" method="post" id="delete-buku">
-                                            @csrf
-    @method('DELETE')
-    <button onclick="return confirm('yakin mau dihapus?')" class="btn-delete">Hapus</button>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button onclick="return confirm('Yakin mau dihapus?')" class="btn-delete">Hapus</button>
                                             </form>
-                                            <a x-data="{ tooltip: 'Edite' }" href="{{ route('buku.edit', $buku->id) }}">
+                                            <a x-data="{ tooltip: 'Edit' }}" href="{{ route('buku.edit', $buku->id) }}">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="none"
@@ -83,9 +82,8 @@
                         </tbody>
                     </table>
                     <div class="mt-4">
-    {{ $data_buku->links('vendor.pagination.tailwind') }}
-</div>
-
+                        {{ $data_buku->links('vendor.pagination.tailwind') }}
+                    </div>
                 </div>
             </div>
         </div>
