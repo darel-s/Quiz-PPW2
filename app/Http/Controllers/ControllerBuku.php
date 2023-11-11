@@ -41,18 +41,57 @@ class ControllerBuku extends Controller
     }
 
     public function create() {
-        return view('buku.create');
+        $buku = new Buku; 
+        return view('buku.create', compact('buku'));
     }
 
     public function store(Request $request) {
-        Buku::create([
+        $request->validate([
+            'thumbnail' => 'image|mimes:jpeg,jpg,png|max:2048'
+        ]);
+    
+        $buku = Buku::create([
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'harga' => $request->harga,
             'tgl_terbit' => $request->tgl_terbit
         ]);
-        return redirect('/buku');
+    
+        if ($request->hasFile('thumbnail')) {
+            $fileName = time().'_'.$request->thumbnail->getClientOriginalName();
+            $filePath = $request->file('thumbnail')->storeAs('uploads', $fileName, 'public');
+    
+            Image::make(storage_path().'/app/public/uploads/'.$fileName)
+                ->fit(240,320)
+                ->save();
+    
+            Buku::create([
+                'judul'     => $request->judul,
+                'penulis'   => $request->penulis,
+                'harga'     => $request->harga,
+                'tgl_terbit'=> $request->tgl_terbit,
+                'filename'  => $fileName,
+                'filepath'  => '/storage/' . $filePath
+            ]);
+        }
+    
+        if ($request->file('gallery')) {
+            foreach ($request->file('gallery') as $key => $file) {
+                $fileName = time().'_'.$file->getClientOriginalName();
+                $filePath = $file->storeAs('uploads', $fileName, 'public');
+    
+                $gallery = Gallery::create([
+                    'nama_galeri' => $fileName,
+                    'path' => '/storage/' . $filePath,
+                    'foto' => $fileName,
+                    'buku_id' => $buku->id
+                ]);
+            }
+        }
+    
+        return redirect('/buku')->with('pesan', 'Buku baru berhasil ditambahkan');
     }
+    
 
     public function destroy($id) {
         $buku = Buku::find($id);

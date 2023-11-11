@@ -55,8 +55,9 @@
                                     <td class="px-6 py-4">
                                         <div class="flex justify-end gap-4">
                                             <form action="{{ route('buku.destroy', $buku->id) }}" method="post" id="delete-buku">
-                                                @csrf
-                                                <button onclick="return confirm('yakin mau dihapus?')" class="btn-delete">Hapus</button>
+                                            @csrf
+    @method('DELETE')
+    <button onclick="return confirm('yakin mau dihapus?')" class="btn-delete">Hapus</button>
                                             </form>
                                             <a x-data="{ tooltip: 'Edite' }" href="{{ route('buku.edit', $buku->id) }}">
                                                 <svg
