@@ -52,30 +52,30 @@
                         </script>
                     </div>
 
-                    <div class="gallery_items mt-6 flex space-x-4">
-                        @foreach($buku->galleries()->get() as $gallery)
-                            <div class="gallery_item border-2 border-gray-200 shadow-lg p-2 rounded flex flex-col items-center">
-                                <img
-                                    class="rounded-full object-cover object-center mb-2"
-                                    src="{{ asset($gallery->path) }}"
-                                    alt=""
-                                    width="100"
-                                    height="100"
-                                />
-                                <form action="{{ route('buku.deleteGallery', ['buku' => $buku->id, 'gallery' => $gallery->id]) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Hapus</button>
-                                </form>
-                            </div>
-                        @endforeach
-                    </div>
-
                     <div class="mt-4">
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Simpan</button>
                         <a href="/buku" class="text-gray-600 ml-2">Batal</a>
                     </div>
                 </form>
+
+                <div class="gallery_items mt-6 flex space-x-4">
+                    @foreach($buku->galleries()->get() as $gallery)
+                        <div class="gallery_item border-2 border-gray-200 shadow-lg p-2 rounded flex flex-col items-center">
+                            <img
+                                class="rounded-full object-cover object-center mb-2"
+                                src="{{ asset($gallery->path) }}"
+                                alt=""
+                                width="100"
+                                height="100"
+                            />
+                            <form action="{{ route('buku.deleteGallery', ['buku' => $buku->id, 'gallery' => $gallery->id]) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Hapus</button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
