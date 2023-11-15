@@ -62,10 +62,10 @@
                                     width="100"
                                     height="100"
                                 />
-                                <form action="{{ route('buku.deleteGallery', [$buku->id, $gallery->id]) }}" method="POST">
+                                <form action="{{ route('buku.deleteGallery', ['buku' => $buku->id, 'gallery' => $gallery->id]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button onclick="return confirm('Yakin mau dihapus?')" class="text-red-500">Hapus</button>
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Hapus</button>
                                 </form>
                             </div>
                         @endforeach
