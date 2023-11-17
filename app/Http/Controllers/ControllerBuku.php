@@ -155,4 +155,11 @@ class ControllerBuku extends Controller
         return redirect()->back()->with('success', 'Gambar berhasil dihapus');
     }
 
+    public function galbuku($title)
+{
+    $bukus = Buku::where('buku_seo', $title)->first();
+    $galeries = $bukus->galleries()->orderBy('id', 'desc')->paginate(5);
+    return view ('buku.detail_buku', compact('bukus', 'galeries'));
+}
+
 }

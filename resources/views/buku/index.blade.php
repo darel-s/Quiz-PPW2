@@ -40,7 +40,7 @@
                                             </div>
                                         @endif
                                         <div class="text-sm">
-                                            <div class="font-medium text-gray-700">{{ $buku->judul }}</div>
+                                        <a href="{{ $buku->buku_seo ? route('galeri.buku', $buku->buku_seo) : '#' }}" class="font-medium text-gray-700">{{ $buku->judul }}</a>
                                             <div class="text-gray-400">{{ $buku->penulis }}</div>
                                         </div>
                                     </th>

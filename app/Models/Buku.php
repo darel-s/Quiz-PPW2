@@ -14,8 +14,13 @@ class Buku extends Model
 
     protected $dates = ['tgl_terbit'];
 
-    public function galleries(): HasMany
+    public function galleries()
+{
+    return $this->hasMany(Gallery::class);
+}
+
+    public function photos()
     {
-        return $this->hasMany(Gallery::class);
+        return $this->hasMany('App\Models\Buku', 'id', 'id');
     }
 }
