@@ -191,4 +191,17 @@ public function rate(Request $request, Buku $buku)
     return redirect()->route('buku.detail_buku', ['buku' => $buku->id])->with('averageRating', $averageRating);
 }
 
+public function favourite(Buku $buku)
+{
+    Auth::user()->favouriteBooks()->syncWithoutDetaching([$buku->id]);
+    return redirect()->route('buku.myfavourite');
+}
+
+public function showFavourites()
+{
+    $favouriteBooks = Auth::user()->favouriteBooks;
+    return view('buku.myfavourite', compact('favouriteBooks'));
+}
+
+
 }

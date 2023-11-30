@@ -31,6 +31,13 @@
                                 <button type="submit" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rate</button>
                             </form>
                         @endif
+
+                        @if(Auth::check())
+    <form action="{{ route('buku.favourite', $bukus) }}" method="POST">
+        @csrf
+        <button type="submit" class="mt-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Save to Favourites</button>
+    </form>
+@endif
                         <div class="flex flex-wrap gap-4 overflow-x-auto">
                             @foreach($bukus->galleries as $gallery)
                                 <div class="flex-shrink-0 flex flex-col items-center  rounded-md bg-white m-2 p-4">

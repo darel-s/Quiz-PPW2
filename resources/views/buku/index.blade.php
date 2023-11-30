@@ -9,6 +9,7 @@
                     {{ __('Tambah Buku Baru') }}
                 </a>
             @endif
+            <a href="{{ route('buku.myfavourite') }}">My Favourite Books</a>
         </div>
     </x-slot>
 

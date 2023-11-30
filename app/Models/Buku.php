@@ -27,4 +27,9 @@ class Buku extends Model
     public function ratings() {
         return $this->hasMany(Rating::class);
     }
+
+    public function favouritedByUsers()
+{
+    return $this->belongsToMany(User::class, 'favourite_books', 'users_id');
+}
 }
