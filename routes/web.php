@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/buku', [ControllerBuku::class, 'index'])->name('buku.index');
     Route::get('/buku/search', [ControllerBuku::class, 'search'])->name('buku.search');
+    Route::post('/buku/{buku}/rate', [ControllerBuku::class, 'rate'])->middleware('auth')->name('buku.rate');
+    Route::get('/buku/{buku}', [ControllerBuku::class, 'galbuku'])->name('buku.detail_buku');
 });
 
 Route::middleware(['auth','admin'])->group(function () {

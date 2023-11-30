@@ -23,4 +23,8 @@ class Buku extends Model
     {
         return $this->hasMany('App\Models\Buku', 'id', 'id');
     }
+
+    public function ratings() {
+        return $this->hasMany(Rating::class);
+    }
 }

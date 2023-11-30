@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Buku;  
 use App\Models\Gallery;
+use App\Models\Rating;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Auth;
 
 class ControllerBuku extends Controller
 {
@@ -155,11 +157,38 @@ class ControllerBuku extends Controller
         return redirect()->back()->with('success', 'Gambar berhasil dihapus');
     }
 
-    public function galbuku($title)
+    public function galbuku($id)
 {
-    $bukus = Buku::where('buku_seo', $title)->first();
+    $bukus = Buku::find($id);
+
+    if (!$bukus) {
+        return redirect()->back()->with('error', 'Buku not found');
+    }
+
     $galeries = $bukus->galleries()->orderBy('id', 'desc')->paginate(5);
-    return view ('buku.detail_buku', compact('bukus', 'galeries'));
+
+    $ratings = $bukus->ratings;
+    $totalRating = $ratings->count();
+    $sumRating = $ratings->sum('rating');
+    $averageRating = $totalRating > 0 ? round($sumRating / $totalRating, 2) : 0;
+
+    return view ('buku.detail_buku', compact('bukus', 'galeries', 'averageRating'));
+}
+
+public function rate(Request $request, Buku $buku)
+{
+    $rating = new Rating;
+    $rating->rating = $request->rating;
+    $rating->users_id = Auth::id();
+
+    $buku->ratings()->save($rating);
+
+    $ratings = $buku->ratings;
+    $totalRating = $ratings->count();
+    $sumRating = $ratings->sum('rating');
+    $averageRating = $totalRating > 0 ? round($sumRating / $totalRating, 2) : 0;
+
+    return redirect()->route('buku.detail_buku', ['buku' => $buku->id])->with('averageRating', $averageRating);
 }
 
 }
