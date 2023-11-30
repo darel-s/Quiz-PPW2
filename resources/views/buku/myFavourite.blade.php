@@ -1,22 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            My Favourite Books
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                My Favorites
+            </h2>
+            <a href="{{ route('buku.index') }}" class="text-blue-500 hover:underline">Back to Books</a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    @foreach($favouriteBooks as $book)
-                        <div class="mb-4">
-                            <h3 class="text-lg font-bold">{{ $book->judul }}</h3>
-                            <p class="text-gray-500">by {{ $book->pengarang }}</p>
-                        </div>
-                    @endforeach
-                </div>
+    <div class="max-w-2xl mx-auto p-4">
+        @if ($favoriteBooks->isEmpty())
+            <div class="text-center py-8">
+                <p class="text-gray-600">You haven't added any books to your favorites yet.</p>
             </div>
-        </div>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach ($favoriteBooks as $favoriteBook)
+                    <div class="bg-white shadow-md p-4 rounded-md">
+                        @if ($favoriteBook->book->filepath)
+                            <img src="{{ asset($favoriteBook->book->filepath) }}" alt="{{ $favoriteBook->book->judul }}" class="w-full h-40 object-cover mb-4 rounded-md">
+                        @endif
+                        <h3 class="text-xl font-semibold">{{ $favoriteBook->book->judul }}</h3>
+                        <p class="text-gray-600">{{ $favoriteBook->book->penulis }}</p>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 </x-app-layout>

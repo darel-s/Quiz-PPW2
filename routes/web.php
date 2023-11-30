@@ -29,20 +29,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/buku', [ControllerBuku::class, 'index'])->name('buku.index');
     Route::get('/buku/search', [ControllerBuku::class, 'search'])->name('buku.search');
-    Route::post('/buku/{buku}/rate', [ControllerBuku::class, 'rate'])->middleware('auth')->name('buku.rate');
-    Route::get('/buku/{buku}', [ControllerBuku::class, 'galbuku'])->name('buku.detail_buku');
-    Route::post('/buku/{buku}/favourite', [ControllerBuku::class, 'favourite'])->name('buku.favourite');
-    Route::get('/buku/myfavourite', [ControllerBuku::class, 'showFavourites'])->name('buku.myfavourite');
+    Route::get('/detail-buku/{title}', [ControllerBuku::class, 'galeri_buku'])->name('galeri.buku');
+    Route::post('/buku/rate/{id}', [ControllerBuku::class, 'rateBuku'])->name('buku.rate');
+    Route::post('/buku/{id}/favorite', [ControllerBuku::class, 'addToFavorites'])->name('buku.favorite');
+    Route::get('/buku/myfavorites', [ControllerBuku::class, 'myFavorites'])->name('buku.myfavorites');
 });
 
-Route::middleware(['auth','admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/buku/create', [ControllerBuku::class, 'create'])->name('buku.create');
     Route::post('/buku', [ControllerBuku::class, 'store'])->name('buku.store');
     Route::delete('/buku/{id}', [ControllerBuku::class, 'destroy'])->name('buku.destroy');
     Route::get('/buku/edit/{id}', [ControllerBuku::class, 'edit'])->name('buku.edit');
     Route::post('/buku/update/{id}', [ControllerBuku::class, 'update'])->name('buku.update');
     Route::delete('/buku/{buku}/gallery/{gallery}', [ControllerBuku::class, 'deleteGallery'])->name('buku.deleteGallery');
-    Route::get('/detail-buku/{title}', [ControllerBuku::class, 'galbuku'])->name('galeri.buku');
 });
 
 

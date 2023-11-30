@@ -10,26 +10,18 @@ class Buku extends Model
 {
     protected $table = 'buku';
 
-    protected $fillable = ['id', 'judul', 'penulis', 'harga', 'tgl_terbit', 'created_at', 'updated_at', 'filename', 'filepath'];
+    protected $fillable = ['id', 'judul', 'penulis', 'harga', 'tgl_terbit', 'created_at', 'updated_at', 'filename', 'filepath','rating', 'buku_seo',
+    'rating_count',];
 
     protected $dates = ['tgl_terbit'];
 
     public function galleries()
-{
-    return $this->hasMany(Gallery::class);
-}
+    {
+        return $this->hasMany(Gallery::class);
+    }
 
     public function photos()
     {
         return $this->hasMany('App\Models\Buku', 'id', 'id');
     }
-
-    public function ratings() {
-        return $this->hasMany(Rating::class);
-    }
-
-    public function favouritedByUsers()
-{
-    return $this->belongsToMany(User::class, 'favourite_books', 'users_id');
-}
 }

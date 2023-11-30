@@ -1,13 +1,14 @@
 <?php
 
+
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Buku;  
 use App\Models\Gallery;
-use App\Models\Rating;
 use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Models\FavoriteBook;
 
 class ControllerBuku extends Controller
 {
@@ -56,7 +57,8 @@ class ControllerBuku extends Controller
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'harga' => $request->harga,
-            'tgl_terbit' => $request->tgl_terbit
+            'tgl_terbit' => $request->tgl_terbit,
+            'buku_seo' => Str::slug($request->judul, '-'),
         ]);
     
         if ($request->hasFile('thumbnail')) {
@@ -72,6 +74,7 @@ class ControllerBuku extends Controller
                 'penulis'   => $request->penulis,
                 'harga'     => $request->harga,
                 'tgl_terbit'=> $request->tgl_terbit,
+                'buku_seo' => Str::slug($request->judul, '-'),
                 'filename'  => $fileName,
                 'filepath'  => '/storage/' . $filePath
             ]);
@@ -157,51 +160,54 @@ class ControllerBuku extends Controller
         return redirect()->back()->with('success', 'Gambar berhasil dihapus');
     }
 
-    public function galbuku($id)
-{
-    $bukus = Buku::find($id);
+    public function galeri_buku($title)
+    {
+        $bukus = Buku::where('id', $title)->first();
 
-    if (!$bukus) {
-        return redirect()->back()->with('error', 'Buku not found');
+        $galeries = $bukus->galleries()->orderBy('id', 'desc')->paginate(5);
+        return view ('buku.detail_buku', compact('bukus', 'galeries'));
     }
 
-    $galeries = $bukus->galleries()->orderBy('id', 'desc')->paginate(5);
+    public function rateBuku(Request $request, $id) {
+        $this->validate($request, [
+            'rating' => 'required|integer|between:1,5',
+        ]);
+    
+        $buku = Buku::find($id);
+        $currentRating = $buku->rating ?? 0;
+        $currentCount = $buku->rating_count ?? 0;
+    
+        $newRating = ($currentRating * $currentCount + $request->rating) / ($currentCount + 1);
+    
+        $buku->update([
+            'rating' => $newRating,
+            'rating_count' => $currentCount + 1,
+        ]);
 
-    $ratings = $bukus->ratings;
-    $totalRating = $ratings->count();
-    $sumRating = $ratings->sum('rating');
-    $averageRating = $totalRating > 0 ? round($sumRating / $totalRating, 2) : 0;
-
-    return view ('buku.detail_buku', compact('bukus', 'galeries', 'averageRating'));
-}
-
-public function rate(Request $request, Buku $buku)
-{
-    $rating = new Rating;
-    $rating->rating = $request->rating;
-    $rating->users_id = Auth::id();
-
-    $buku->ratings()->save($rating);
-
-    $ratings = $buku->ratings;
-    $totalRating = $ratings->count();
-    $sumRating = $ratings->sum('rating');
-    $averageRating = $totalRating > 0 ? round($sumRating / $totalRating, 2) : 0;
-
-    return redirect()->route('buku.detail_buku', ['buku' => $buku->id])->with('averageRating', $averageRating);
-}
-
-public function favourite(Buku $buku)
-{
-    Auth::user()->favouriteBooks()->syncWithoutDetaching([$buku->id]);
-    return redirect()->route('buku.myfavourite');
-}
-
-public function showFavourites()
-{
-    $favouriteBooks = Auth::user()->favouriteBooks;
-    return view('buku.myfavourite');
-}
+        return redirect()->back()->with('success', 'Rating submitted successfully');
 
 
+    }
+
+
+    public function addToFavorites(Request $request, $id)
+    {
+        $user = auth()->user();
+
+        if (!$user->favoriteBooks()->where('book_id', $id)->exists()) {
+            $user->favoriteBooks()->create(['book_id' => $id]);
+        }
+
+        return redirect()->back()->with('success', 'Book added to favorites');
+    }
+
+    public function myFavorites()
+    {
+        $user = auth()->user();
+        $favoriteBooks = $user->favoriteBooks()->with('book')->get();
+
+        return view('buku.myFavourite', compact('favoriteBooks'));
+    }
+
+    
 }
