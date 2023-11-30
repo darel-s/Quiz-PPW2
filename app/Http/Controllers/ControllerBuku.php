@@ -200,7 +200,7 @@ public function favourite(Buku $buku)
 public function showFavourites()
 {
     $favouriteBooks = Auth::user()->favouriteBooks;
-    return view('buku.myfavourite', compact('favouriteBooks'));
+    return view('buku.myfavourite');
 }
 
 
