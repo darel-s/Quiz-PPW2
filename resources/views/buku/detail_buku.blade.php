@@ -53,7 +53,7 @@
 
         <form method="post" action="{{ route('buku.rate', ['id' => $bukus->id]) }}" class="mt-4">
             @csrf
-            <div class="mb-4">
+            <div class="flex items-center">
                 <label for="rating" class="block text-sm font-medium text-gray-700">Submit Rating:</label>
                 <select name="rating" id="rating" class="mt-1 block w-1/4">
                     <option value="1">1</option>

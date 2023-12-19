@@ -185,8 +185,6 @@ class ControllerBuku extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Rating submitted successfully');
-
-
     }
 
 
@@ -209,5 +207,10 @@ class ControllerBuku extends Controller
         return view('buku.myFavourite', compact('favoriteBooks'));
     }
 
+    public function bukuPopuler()
+    {
+        $buku = Buku::orderBy('rating', 'desc')->take(10)->get();
+        return view('buku.popular', compact('buku'));
+    }
     
 }

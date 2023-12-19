@@ -20,10 +20,8 @@ class BukuFactory extends Factory
             'judul' => $this->faker->sentence(),
             'penulis' => $this->faker->name(),
             'harga' => $this->faker->numberBetween(50000, 200000),
-            'tgl_terbit' => $this->faker->date('Y-m-d')
-
+            'tgl_terbit' => $this->faker->date('Y-m-d'),
+            'rating' => $this->faker->randomFloat(2, 0, 5), // menambahkan kolom 'rating'
         ];
     }
 }
-
-
